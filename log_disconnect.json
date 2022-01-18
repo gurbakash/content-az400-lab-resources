@@ -1,0 +1,53 @@
+{
+  "mode": "All",
+  "policyRule": {
+    "if": {
+      "field": "type",
+      "equals": "Microsoft.DBforPostgreSQL/servers"
+    },
+    "then": {
+      "effect": "deployIfNotExists",
+      "details": {
+        "type": "Microsoft.DBforPostgreSQL/servers/configurations",
+        "name": "log_disconnections",
+        "existenceCondition": {
+          "field": "Microsoft.DBforPostgreSQL/servers/configurations/value",
+          "equals": "ON"
+        },
+        "roleDefinitionIds": [
+          "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+        ],
+        "deployment": {
+          "properties": {
+            "mode": "incremental",
+            "template": {
+              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "parameters": {
+                "serverName": {
+                  "type": "String"
+                }
+              },
+              "resources": [
+                {
+                  "type": "Microsoft.DBforPostgreSQL/servers/configurations",
+                  "apiVersion": "2017-12-01",
+                  "name": "[concat(parameters('serverName'), '/log_disconnections')]",
+                  "properties": {
+                    "value": "ON"
+                  }
+                }
+              ]
+            },
+            "parameters": {
+              "serverName": {
+                "value": "[field('name')]"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "parameters": {}
+}
