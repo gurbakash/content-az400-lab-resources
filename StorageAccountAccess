@@ -1,2 +1,21 @@
+++++Networking++++
 1) All Networks/Public Blob Access Disabled = YES
 2) Selected Networks/Public Blob Access Disable = NO
+3) Selected Networks/Public Blob Access Enable = NO
+
+++++Public Blob Access (All Networks)++++
+1)Blob Public Access = ENABLED
+a) Private (no annonymous access) -> Cannot view using unauthenticated request
+b) Blob (anonymous read access for blobs only) -> Can view image (but no container data?)
+c) Publiccontainer 
+
+2) Blob Public Access = DISABLED
+No anonymous access is allowed at all
+
+Also see:
+https://docs.microsoft.com/en-gb/azure/storage/blobs/anonymous-read-access-prevent
+
+
+++++Access Key vs SAS++++
+Access key = Administrative rights over storage account (not good!), no access if "Selected Networks" in place
+SAS = temporary more restrictive access
