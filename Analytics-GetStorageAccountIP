@@ -1,0 +1,11 @@
+AzureActivity
+| where Properties has "MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE"
+| extend dynamproperties = todynamic(Properties)
+| extend clientIp = todynamic(tostring(dynamproperties.httpRequest))
+| extend requestbody = todynamic(tostring(dynamproperties.requestbody))
+| extend requestbodyproperties = todynamic(tostring(requestbody.properties))
+| extend networkACL = todynamic(tostring(requestbodyproperties.networkAcls))
+| where isnotempty(networkACL.ipRules) and networkACL.ipRules != "[]"
+| project TimeGenerated, dynamproperties.resource, dynamproperties.resourceGroup, dynamproperties.subscriptionId, dynamproperties.entity, dynamproperties.caller, networkACL.ipRules, clientIp.clientIpAddress
+| sort by TimeGenerated desc
+
