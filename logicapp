@@ -1,0 +1,153 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "Compose": {
+                        "inputs": "@{body('Parse_JSON')?['StorageAccFirewallIP']}\n",
+                        "runAfter": {
+                            "Parse_JSON_2": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Compose"
+                    },
+                    "Parse_JSON": {
+                        "inputs": {
+                            "content": "@items('For_each')?['properties']?['additionalData']?['Custom Details']",
+                            "schema": {
+                                "properties": {
+                                    "StorageAccFirewallIP": {
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "runAfter": {},
+                        "type": "ParseJson"
+                    },
+                    "Parse_JSON_2": {
+                        "inputs": {
+                            "content": "@triggerBody()?['object']?['properties']?['relatedEntities']",
+                            "schema": {
+                                "items": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "kind": {
+                                            "type": "string"
+                                        },
+                                        "properties": {
+                                            "properties": {
+                                                "address": {
+                                                    "type": "string"
+                                                },
+                                                "friendlyName": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "type",
+                                        "kind",
+                                        "properties"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
+                            }
+                        },
+                        "runAfter": {
+                            "Parse_JSON": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ParseJson"
+                    },
+                    "Send_an_email_(V2)": {
+                        "inputs": {
+                            "body": {
+                                "Body": "<p>For Azure CIS Benchmark you should use Virtual Networks instead of IP addresses.<br>\n<br>\nHere are the following details:<br>\n<br>\nIP's Added:<br>\n@{outputs('Compose')}<br>\n<br>\n</p>",
+                                "Subject": "IP's added",
+                                "To": "gurbakashb@hotmail.com"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['outlook_1']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/v2/Mail"
+                        },
+                        "runAfter": {
+                            "Compose": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@triggerBody()?['object']?['properties']?['Alerts']",
+                "runAfter": {},
+                "type": "Foreach"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_Azure_Sentinel_incident_creation_rule_was_triggered": {
+                "inputs": {
+                    "body": {
+                        "callback_url": "@{listCallbackUrl()}"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azuresentinel']['connectionId']"
+                        }
+                    },
+                    "path": "/incident-creation"
+                },
+                "type": "ApiConnectionWebhook"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azuresentinel": {
+                    "connectionId": "/subscriptions/c726d50c-1ff7-4649-ae77-dda10d863fb0/resourceGroups/testrg/providers/Microsoft.Web/connections/azuresentinel-sendemailifsomeoneaddips",
+                    "connectionName": "azuresentinel-sendemailifsomeoneaddips",
+                    "connectionProperties": {
+                        "authentication": {
+                            "type": "ManagedServiceIdentity"
+                        }
+                    },
+                    "id": "/subscriptions/c726d50c-1ff7-4649-ae77-dda10d863fb0/providers/Microsoft.Web/locations/uksouth/managedApis/azuresentinel"
+                },
+                "outlook_1": {
+                    "connectionId": "/subscriptions/c726d50c-1ff7-4649-ae77-dda10d863fb0/resourceGroups/testrg/providers/Microsoft.Web/connections/outlook-1",
+                    "connectionName": "outlook-1",
+                    "id": "/subscriptions/c726d50c-1ff7-4649-ae77-dda10d863fb0/providers/Microsoft.Web/locations/uksouth/managedApis/outlook"
+                }
+            }
+        }
+    }
+}
