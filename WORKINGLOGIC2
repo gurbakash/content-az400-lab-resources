@@ -19,7 +19,6 @@
                                                 "body": {
                                                     "properties": {
                                                         "networkAcls": {
-                                                            "bypass": "None",
                                                             "defaultAction": "Deny",
                                                             "ipRules": []
                                                         }
