@@ -54,7 +54,7 @@
                             "or": [
                                 {
                                     "equals": [
-                                        "@length(body('HTTP_2')?['data']?['rows'][0])",
+                                        "@length(body('HTTP_2')?['data']?['rows'])",
                                         0
                                     ]
                                 }
