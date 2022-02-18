@@ -1,0 +1,6 @@
+"body": {
+                                        "query": "where type == 'microsoft.storage/storageaccounts' | where name contains '@{items('For_Each_2')?['HostName']}' | project storageid = id",
+                                        "subscriptions": [
+                                            "@{items('For_Each')?['subscriptionId']}"
+                                        ]
+                                    },
