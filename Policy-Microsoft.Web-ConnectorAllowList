@@ -1,0 +1,23 @@
+{
+  "mode": "All",
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "Microsoft.Web/connections/api.id",
+          "contains": "managedApis/"
+        },
+        {
+          "not": {
+            "field": "Microsoft.Web/connections/api.id",
+            "like": "*managedApis/outlook"
+          }
+        }
+      ]
+    },
+    "then": {
+      "effect": "deny"
+    }
+  },
+  "parameters": {}
+}
