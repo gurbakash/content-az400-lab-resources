@@ -1,0 +1,21 @@
+{
+  "mode": "All",
+  "policyRule": {
+    "if": {
+      "allOf": [
+        {
+          "field": "type",
+          "equals": "Microsoft.KeyVault/vaults"
+        },
+        {
+          "field": "Microsoft.KeyVault/vaults/sku.name",
+          "notEquals": "Premium"
+        }
+      ]
+    },
+    "then": {
+      "effect": "deny"
+    }
+  },
+  "parameters": {}
+}
